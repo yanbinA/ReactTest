@@ -23,7 +23,7 @@ function Square(props) {
 class Board extends React.Component {
 
     renderSquare(i) {
-        return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)}/>;
+        return <Square value={this.props.squares[i[1] - 1][i[0] - 1]} onClick={() => this.props.onClick(i)}/>;
     }
 
     render() {
@@ -32,19 +32,19 @@ class Board extends React.Component {
 			<div>
 
 				<div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
+                    {this.renderSquare([1,1])}
+                    {this.renderSquare([2,1])}
+                    {this.renderSquare([3,1])}
 				</div>
 				<div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
+                    {this.renderSquare([1,2])}
+                    {this.renderSquare([2,2])}
+                    {this.renderSquare([3,2])}
 				</div>
 				<div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
+                    {this.renderSquare([1,3])}
+                    {this.renderSquare([2,3])}
+                    {this.renderSquare([3,3])}
 				</div>
 			</div>
         );
@@ -55,19 +55,19 @@ class Board extends React.Component {
 
 function calculatewinner(squares) {
 	const lines = [
-		[0,1,2],
-        [3,4,5],
-        [6,7,8],
-        [0,3,6],
-        [1,4,7],
-        [2,5,8],
-        [0,4,8],
-        [2,4,6],
+		[[0,0],[0,1],[0,2]],
+        [[1,0],[1,1],[1,2]],
+        [[2,0],[2,1],[2,2]],
+        [[0,0],[1,0],[2,0]],
+        [[0,1],[1,1],[2,1]],
+        [[0,2],[1,2],[2,2]],
+        [[0,0],[1,1],[2,2]],
+        [[0,2],[1,1],[2,0]],
 	];
 	for (let i = 0; i < lines.length; i++) {
 		const [a, b, c] = lines[i];
-		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-			return squares[a];
+		if (squares[a[0]][a[1]] && squares[a[0]][a[1]] === squares[b[0]][b[1]] && squares[a[0]][a[1]] === squares[c[0]][c[1]]) {
+			return squares[a[0]][a[1]];
 		}
 	}
 	return null;
@@ -78,7 +78,7 @@ class Game extends React.Component {
         super();
         this.state = {
             history:[{
-               squares:Array(9).fill(null),
+               squares:Array(3).fill(Array(3).fill(null))
             }],
             xIsNext:true,
             stepNum:0,
@@ -119,15 +119,17 @@ class Game extends React.Component {
     handleClick(i) {
         const history = this.state.history.slice(0, this.state.stepNum + 1);
         const current = history[history.length - 1];
-        const squares = current.squares.slice();
-        if (calculatewinner(squares) || squares[i]) {
+        let squares = current.squares.slice();
+        const squaresLine = squares[i[1] - 1].slice();
+        if (calculatewinner(squares) || squaresLine[i[0] - 1]) {
             return;
         }
         if (this.state.xIsNext) {
-            squares[i] = 'X';
+            squaresLine[i[0] - 1] = 'X';
         } else {
-            squares[i] = 'O';
+            squaresLine[i[0] - 1] = 'O';
         }
+        squares[i[1] - 1] = squaresLine;
         this.setState({
             history:history.concat({squares:squares,}),
             xIsNext:!this.state.xIsNext,
