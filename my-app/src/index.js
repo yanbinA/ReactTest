@@ -96,7 +96,7 @@ class Game extends React.Component {
         const current = history[this.state.stepNum];
         const winner = calculatewinner(current.squares).winner;
         const winnerLine = calculatewinner(current.squares).winnerLine;
-
+        console.log(`${3+4}`);
 
         if (this.state.sort) {
             history = history.reverse();
@@ -107,6 +107,7 @@ class Game extends React.Component {
            if (move === this.state.sort) {
                return (
                    <li>
+
                        <a href="#" onClick={() => this.jumpTo(this.state.sort?history.length - move - 1: move)} style={{fontWeight:"bold"}}>{desc}</a>
                    </li>
                );
@@ -129,7 +130,7 @@ class Game extends React.Component {
 			<div className="game">
 				<div className="game-board">
 					<Board squares={current.squares}
-                    onClick={(i) => this.handleClick(i)} winnerLine={winnerLine}/>
+                    onClick={this.handleClick.bind(this)} winnerLine={winnerLine}/>
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
