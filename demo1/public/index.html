@@ -20,15 +20,17 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
-
   </head>
   <body>
-    <script type="text/javascript" src="/src/ShoppingList.js"></script>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
-    <div id="shopping"></div>
     <div id="root"></div>
+    <script>
+      const list = [1,2,3,4,5];
+      let map = list.map((number) => number * 2);
+      console.log(map);
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
