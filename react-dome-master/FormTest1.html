@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Stict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" lang = "zh-CN">
+  <head>
+    <script src="build/react.js"></script>
+    <script src="build/react-dom.js"></script>
+    <script src="build/browser.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+        var NameForm = React.createClass({
+            getInitialState:function(props) {
+                return {input:'',textarea:'',select:'',checkbox:true};
+            },
+
+            handleChangeName:function(event) {
+                this.setState({input:event.target.value})
+            },
+            handleChangeTextarea:function (event) {
+                this.setState({textarea:event.target.value})
+            },
+            handleChangeSelect:function (event) {
+                this.setState({select:event.target.value})
+            },
+            handleChange:function (event) {
+                //alert(event.target.name);
+                let target = event.target;
+                let value = target.type === 'checkbox' ? target.checked : target.value;
+                this.setState({[target.name]:value});
+            },
+
+            handleSubmit:function(event) {
+                alert("Name:" + this.state.input + "\nDesc:" +this.state.textarea + "\nSelect:" + this.state.select);
+                event.preventDefault();
+            },
+            render:function() {
+                return (
+                        <form onSubmit={(e) => this.handleSubmit(e)}>
+                          <label>
+                            Name:
+                            <input type="text" name="input" value={this.state.input} onChange={this.handleChange}/>
+                          </label>
+                          <br/>
+                          <label>
+                            Desc:
+                            <textarea name="textarea" value={this.state.textarea} onChange={this.handleChange}/>
+                          </label>
+                          <br/>
+                          <label>
+                            Desc:
+                            <input type="checkbox" name="checkbox" checked={this.state.checkbox} onChange={this.handleChange}/>
+                          </label>
+                          <br/>
+                          <label>
+                            Select:
+                            <select value={this.state.select} name="select" onChange={this.handleChange}>
+                              <option value="Football">Football</option>
+                              <option value="Football1">Football1</option>
+                              <option value="Football2">Football2</option>
+                            </select>
+                          </label>
+                          <input type="submit" value="Submit"/>
+                        </form>
+                );
+            }
+        })
+
+
+      ReactDOM.render(
+        <NameForm/>,
+        document.getElementById('example')
+      );
+
+    </script>
+  </body>
+</html>
+

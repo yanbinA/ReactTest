@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Stict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" lang = "zh-CN">
+  <head>
+    <script src="build/react.js"></script>
+    <script src="build/react-dom.js"></script>
+    <script src="build/browser.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+        function BoilingVerdict(props) {
+            if (props.celsius >= 100) {
+                return <p>水会烧开</p>;
+            }
+            return <p>水不会烧开</p>;
+        }
+        const scaleNames = {
+            c: 'Celsius',
+            f: 'Fahrenheit'
+        };
+
+        let TemperatureInput = React.createClass({
+            handleChange:function (event) {
+              this.props.onTemperatureChange(event.target.value);
+            },
+            render:function () {
+                const temperature = this.props.temperature;
+                const scale = this.props.scale;
+                return (
+                  <fieldset>
+                    <legend>Enter temperature in {scaleNames[scale]}:</legend>
+                    <label>
+                      <input type="text" value={temperature} name="temperature"
+                             onChange={this.handleChange} />
+                    </label>
+                  </fieldset>
+                );
+            },
+        });
+
+        let Calculator = React.createClass({
+            getInitialState:function(props) {
+                return {temperature:'',scale:'c'};
+            },
+
+            handleCelsiusChange : function (value) {
+              this.setState({temperature:value,scale:'c'});
+            },
+            render:function() {
+                let celsius, fahrenheit;
+                if (this.state.scale === 'c') {
+                    celsius = this.state.temperature;
+                    fahrenheit = tryConvert(celsius, toFahrenheit);
+                } else {
+                    fahrenheit = this.state.temperature;
+                    celsius = tryConvert(fahrenheit, toCelsius);
+                }
+                return (
+                        <div>
+                          <TemperatureInput scale="c" temperature={celsius} onTemperatureChange={this.handleCelsiusChange}/>
+                          <TemperatureInput scale="f" temperature={fahrenheit} onTemperatureChange={this.handleFahrenheitChange}/>
+                          <BoilingVerdict celsius={parseFloat(celsius)} />
+                        </div>
+                );
+            },
+
+            handleFahrenheitChange : function (value) {
+                this.setState({temperature:value,scale:'f'});
+            }
+        });
+
+
+        function toCelsius(fahrenheit) {
+            return (fahrenheit - 32) * 5 / 9;
+        }
+
+        function toFahrenheit(celsius) {
+            return (celsius * 9 / 5) + 32;
+        }
+
+
+
+        function tryConvert(temperature, convert) {
+            const input = parseFloat(temperature);
+            if (Number.isNaN(input)) {
+                return '';
+            }
+            const output = convert(input);
+            const rounded = Math.round(output * 1000) / 1000;
+            return rounded.toString();
+        }
+
+
+
+
+        ReactDOM.render(
+        <Calculator/>,
+        document.getElementById('example')
+      );
+
+    </script>
+  </body>
+</html>
+
