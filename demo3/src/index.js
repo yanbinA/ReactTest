@@ -24,12 +24,21 @@ class ProductTable extends React.Component{
     render() {
         let rows = [];
         let lastCategory = null;
+        var inStockOnly = this.props.inStockOnly;
+        var query = this.props.query;
         this.props.products.forEach(function (product) {
-           if (product.category !== lastCategory) {
-               rows.push(<ProductCategoryRow category={product.category} key={product.category}/>);
+           if (product.stocked === !inStockOnly && inStockOnly === true) {
+
+           } else if(product.name.indexOf(query) === -1){
+
            }
-           rows.push(<ProductRow product={product} key={product.name}/>);
-           lastCategory = product.category;
+           else {
+               if (product.category !== lastCategory) {
+                   rows.push(<ProductCategoryRow category={product.category} key={product.category}/>);
+               }
+               rows.push(<ProductRow product={product} key={product.name}/>);
+               lastCategory = product.category;
+           }
         });
         return (
             <table>
@@ -46,12 +55,27 @@ class ProductTable extends React.Component{
 }
 
 class SearchBar extends React.Component{
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(event) {
+        let target = event.target;
+        if (target.type !== 'checkbox') {
+            this.props.handleQuery(target.value);
+        } else {
+            this.props.handleInStockOnly(target.checked);
+        }
+
+    }
+
     render() {
         return (
             <form>
-                <input type="text" placeholder="Search..." value={this.props.query}/>
+                <input type="text" placeholder="Search..." value={this.props.query} name="query" onChange={this.handleChange}/>
                 <p>
-                    <input type="checkbox" checked={this.props.inStockOnly}/>
+                    <input type="checkbox" checked={this.props.inStockOnly} name="inStorkOnly" onChange={this.handleChange}/>
                     {' '}
                     Only show products in stock
                 </p>
@@ -59,16 +83,26 @@ class SearchBar extends React.Component{
         );
     }
 }
-class FilterableProductTable  extends React.Component{
+class FilterableProductTable extends React.Component{
     constructor(props) {
         super(props);
         this.state = {query:'', inStockOnly:false};
+        this.handleCheck = this.handleCheck.bind(this);
+        this.handleQuery = this.handleQuery.bind(this);
     }
+
+    handleQuery(query) {
+        this.setState({query:query});
+    }
+    handleCheck(value) {
+        this.setState({inStockOnly:value});
+    }
+
     render() {
         return (
             <div>
-                <SearchBar query={this.state.query} inStockOnly={this.state.inStockOnly}/>
-                <ProductTable products={this.props.products}/>
+                <SearchBar query={this.state.query} inStockOnly={this.state.inStockOnly} handleQuery={this.handleQuery} handleInStockOnly={this.handleCheck}/>
+                <ProductTable products={this.props.products} query={this.state.query} inStockOnly={this.state.inStockOnly}/>
             </div>
         )
     }
